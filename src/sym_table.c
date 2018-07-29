@@ -1,5 +1,6 @@
 #include "sym_table.h"
- 
+
+//pocinjemo da radimo dokumentaciju
 sym_table Sym_table()
 {
   hash globalScope = Hash();
