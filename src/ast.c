@@ -1,17 +1,17 @@
 #include "flavour.h"
 #include "ast.h"
 #include "basic_interface.h"
+#include "sym_table.h"
 
-
-node_con Const_node(type_enum t, var_union v)
-{
-    node_con new = malloc(sizeof(struct _ast_node_con));
-    assert(new);
+/* node_con Const_node(type_enum t, var_union v) */
+/* { */
+/*     node_con new = malloc(sizeof(struct _ast_node_con)); */
+/*     assert(new); */
     
-    new->type = t;
-    new->var = v;
-    return new;
-}
+/*     new->type = t; */
+/*     new->var = v; */
+/*     return new; */
+/* } */
 
 //KLJUCEVE NE KOPIRAM U DRVO
 node_id Id_node(string key)
@@ -71,18 +71,7 @@ ast_node Ast_node_con(type_enum t, void *v)
 {
     ast_node new = Ast_node(AST_NODE_TYPE_CON);
 
-    var_union u;
-    switch(t) {
-    case TYPE_ENUM_INT:
-      u.num = *(int*)v;
-      break;
-    case TYPE_ENUM_STRING:
-      u.str = (string)v;
-      break;
-    default:
-      assert(0);
-    }
-    new->node.con = Const_node(t, u);
+    new->node.con = Basic_type_value(t, v);
 
     return new;
 }
@@ -184,4 +173,9 @@ void print_ast_node(ast_node n)
   }
   free(tmp);
 }
+
+
+
+
+
 

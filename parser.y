@@ -8,6 +8,7 @@
 #include "ast.h"
 
 #include "sym_table.h"
+#include "interpreter.h"
 
   sym_table main_st = NULL;
 
@@ -29,7 +30,7 @@
 %token<i> NUM
 %token<s> ID TXT
 
-%type<n> E stmt block program stmt_array
+%type<n> E stmt 
 
 %left '+' '-'
 %left '*' '/'
@@ -37,12 +38,27 @@
 %start program;
 %%
 
-program: program  E ';' { print_ast_node($1); }
+program: program  stmt  {  }
 |
 ;
 
+stmt: PRINT E ';'      {
+  basic_type_value t = interpret_expr($2,main_st);
+  if( t->type == TYPE_ENUM_INT)
+    printf("%d\n", t->var.num);
+  else
+    printf("%s\n", t->var.str);
+ }
+| INT  ID '=' E ';'    {$$ = Ast_node_bin_oper('=',
+					       Ast_node_id($2), $4);
+ }
+| STRING ID '=' E ';'  {$$ = Ast_node_bin_oper('=',
+					       Ast_node_id($2), $4);}
 
-E: E '+' E      { $$ = Ast_node_bin_oper('-', $1, $3);}
+;
+
+
+E: E '+' E      { $$ = Ast_node_bin_oper('+', $1, $3);}
 | E '-' E       { $$ = Ast_node_bin_oper('-', $1, $3);}
 | E '*' E       { $$ = Ast_node_bin_oper('*', $1, $3);}
 | E '/' E       { $$ = Ast_node_bin_oper('/', $1, $3);}
@@ -55,13 +71,17 @@ E: E '+' E      { $$ = Ast_node_bin_oper('-', $1, $3);}
 
 int main()
 {
-  main_st = Sym_table();
   init_basic_interfaces();
+
+  main_st = Sym_table();
+  int aoeu = 3; 
+  add_symbol(main_st, "test1", TYPE_ENUM_INT, &aoeu );
+  add_symbol(main_st, "test2", TYPE_ENUM_STRING, "aoeu" );  
+  
+
   /*
 
-stmt: PRINT E ';'      {}
-| INT  ID '=' E ';'    {$$ = Ast_node_bin_oper('=',Ast_node_id($2), $3);}
-| STRING ID '=' E ';'  {$$ = Ast_node_bin_oper('=',Ast_node_id($2), $3);}
+stmt:
 | block                {$$ = Ast_node_block($1);}
 ;
 

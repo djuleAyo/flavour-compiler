@@ -11,20 +11,18 @@ sym_data Sym_data(type_enum t, void* var)
     sym_data new = malloc(sizeof(struct _sym_data));
     assert(new);
     
-    new->t = t;
     switch(t)
     {
         case TYPE_ENUM_INT:
-            new->var.num = *(int*)var;
             new->bi = &basic_interface_int;
             break;
         case TYPE_ENUM_STRING:
-	  new->var.str = (string)var;
             new->bi = &basic_interface_string;
             break;
         default:
             assert(0);
     }
+    new->type_value = Basic_type_value(t, var);
     
     return new;
 }
@@ -33,13 +31,13 @@ void free_sym_data(sym_data s)
 {
     if(!s)
         return;
-    switch(s->t)
+    switch(s->type_value->type)
     {
         case TYPE_ENUM_INT:
-	  (s->bi->destructor)(&(s->var.num));
+	  (s->bi->destructor)(&(s->type_value->var.num));
 	  break;
         case TYPE_ENUM_STRING:
-	  (s->bi->destructor)(s->var.str);
+	  (s->bi->destructor)(s->type_value->var.str);
 	  break;
         default:
             assert(0);
@@ -53,13 +51,13 @@ string sym_dataToString(sym_data s)
         return NULL;
     string ret_str;
     
-    switch(s->t)
+    switch(s->type_value->type)
     {
         case TYPE_ENUM_INT:
-	  ret_str = (s->bi->toString)(&(s->var.num));
+	  ret_str = (s->bi->toString)(&(s->type_value->var.num));
 	  break;
         case TYPE_ENUM_STRING:
-	  ret_str = (s->bi->toString)((s->var.str));
+	  ret_str = (s->bi->toString)((s->type_value->var.str));
 	  break;
         default:
 	  assert(0);
@@ -68,15 +66,15 @@ string sym_dataToString(sym_data s)
     return ret_str;
 }
 
-int type_check(sym_data s, type_enum t)
-{
-    return s->t == t? 1:0;
-}
+/* int type_check(sym_data s, type_enum t) */
+/* { */
+/*     return s->t == t? 1:0; */
+/* } */
 
-int same_type(sym_data s1, sym_data s2)
-{
-    return s1->t == s2->t ? 1:0;
-}
+/* int same_type(sym_data s1, sym_data s2) */
+/* { */
+/*     return s1->t == s2->t ? 1:0; */
+/* } */
 
 /*
 int main()
@@ -108,4 +106,5 @@ int main()
     
     return 0;
 }
+
 */

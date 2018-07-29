@@ -2,6 +2,7 @@
 
 #include "types.h"
 
+
 #define BLOCK_INITIAL_VOLUME 10
 #define UNARAN 1
 #define BINARAN 2
@@ -13,13 +14,13 @@ typedef enum {
   AST_NODE_TYPE_BLOCK
 } ast_node_type;
 
-struct _ast_node_con con;
+struct _basic_type_value con;
 struct _ast_node_id id;
 struct _ast_node_op op;
 struct _ast_node_block block;
 
 typedef union {
-  struct _ast_node_con* con;
+  basic_type_value con;
   struct _ast_node_id* id;
   struct _ast_node_op* op;
   struct _ast_node_block* block;
@@ -32,12 +33,7 @@ struct _ast_node {
 };
 typedef struct _ast_node* ast_node;
 
-struct _ast_node_con
-{
-  type_enum type;
-  var_union var;
-};
-typedef struct _ast_node_con* node_con;
+typedef basic_type_value node_con;
 
 struct _ast_node_id
 {
@@ -71,10 +67,4 @@ void add_stmt_to_block(node_block block, ast_node stmt);
 
 string node_conToString(node_con n);
 void print_ast_node(ast_node n);
-
-
-
-
-
-
 

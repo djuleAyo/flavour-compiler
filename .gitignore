@@ -1,0 +1,7 @@
+lex.yy.*
+a.out
+gmon.out
+parser.tab.*
+*.o
+flavour
+*~

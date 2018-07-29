@@ -4,9 +4,8 @@
 
 struct _sym_data
 {
-    type_enum t;
-    var_union var;
-    basic_interface bi;
+  basic_type_value type_value;
+  basic_interface bi;
 };
 
 typedef struct _sym_data* sym_data;
