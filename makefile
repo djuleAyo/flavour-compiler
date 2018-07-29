@@ -13,7 +13,7 @@ src/%.o: src/%.c
 #	$(CC) -c $^
 
 parser.tab.c: parser.y
-	bison -d $^
+	bison -d -v $^
 
 #lex.yy.o: lex.yy.c
 #	$(CC) -c $^

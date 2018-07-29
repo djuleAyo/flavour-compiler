@@ -63,7 +63,8 @@ ast_node Ast_node_un_oper(char oper_type, ast_node operand);
 ast_node Ast_node_bin_oper(char oper_type, ast_node operand1, ast_node operand2);
 ast_node Ast_node_block();
 
-void add_stmt_to_block(node_block block, ast_node stmt);
+
+void add_stmt(node_block block, ast_node stmt);
 
 string node_conToString(node_con n);
 void print_ast_node(ast_node n);

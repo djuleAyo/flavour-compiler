@@ -7,3 +7,5 @@
 
 basic_type_value interpret_expr(ast_node n, sym_table st);
 
+void interpret_stmt(ast_node n, sym_table st);
+

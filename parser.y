@@ -30,7 +30,7 @@
 %token<i> NUM
 %token<s> ID TXT
 
-%type<n> E stmt 
+%type<n> E stmt stmt_array block
 
 %left '+' '-'
 %left '*' '/'
@@ -38,23 +38,23 @@
 %start program;
 %%
 
-program: program  stmt  {  }
+
+
+program: stmt program  {interpret_stmt($1, main_st);}
 |
 ;
 
-stmt: PRINT E ';'      {
-  basic_type_value t = interpret_expr($2,main_st);
-  if( t->type == TYPE_ENUM_INT)
-    printf("%d\n", t->var.num);
-  else
-    printf("%s\n", t->var.str);
- }
-| INT  ID '=' E ';'    {$$ = Ast_node_bin_oper('=',
-					       Ast_node_id($2), $4);
- }
-| STRING ID '=' E ';'  {$$ = Ast_node_bin_oper('=',
-					       Ast_node_id($2), $4);}
+block : '{' stmt_array '}'  { $$ = $2;}
+;
 
+stmt_array : stmt stmt_array { add_stmt($2, $1);}
+|                            { $$ = Ast_node_block();}
+;
+
+stmt: PRINT E ';'      { $$ = Ast_node_un_oper('p', $2); /*interpret_stmt($$, main_st);*/}
+| INT  ID '=' E ';'    {$$ = Ast_node_bin_oper('=',Ast_node_id($2), $4);  /*interpret_stmt($$, main_st);*/}
+| STRING ID '=' E ';'  {$$ = Ast_node_bin_oper('=', Ast_node_id($2), $4); /*interpret_stmt($$, main_st);*/ }
+| block     { /*add_scope(main_st);*/ $$ = $1; /*interpret_stmt($$, main_st);*/}
 ;
 
 

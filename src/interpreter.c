@@ -55,3 +55,76 @@ basic_type_value interpret_expr(ast_node n, sym_table st)
     assert(0);
   }
 }
+
+
+void interpret_stmt(ast_node n, sym_table st)
+{
+    switch(n->type)
+    {
+        case AST_NODE_TYPE_OP:
+        {
+            switch(n->node.op->oper_type)
+            {
+                case '=':
+                {
+                    basic_type_value b = interpret_expr((n->node.op->opers)[1], st);
+                    
+                    add_symbol(st, (n->node.op->opers)[0]->node.id->key, b->type, (b->type == TYPE_ENUM_INT) ? (void*)&(b->var.num) : (void*)b->var.str);
+                    
+                    break;
+                }
+                case 'p':
+                {
+                    basic_type_value b = interpret_expr((n->node.op->opers)[0], st);
+                    if(b->type == TYPE_ENUM_INT)
+                        printf("%d\n",b->var.num);
+                    else
+                        printf("%s\n",b->var.str);
+                    
+                    break;
+                }
+                default:
+                    assert(0);
+            }
+            break;
+        }
+        case AST_NODE_TYPE_BLOCK:
+        {
+            {
+                add_scope(st);
+                unsigned i;
+                for(i = 0; i < n->node.block->size; i++)
+                    interpret_stmt((n->node.block->stmts)[i], st);
+                end_scope(st);
+            break;
+            }
+        }
+        default:
+            assert(0);
+        
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

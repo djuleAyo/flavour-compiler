@@ -174,7 +174,16 @@ void print_ast_node(ast_node n)
   free(tmp);
 }
 
-
+void add_stmt(node_block block, ast_node stmt)
+{
+    if(block->size == block->volume)
+    {
+        block->volume *= 2;
+        block->stmts = realloc(block->stmts, block->volume);
+        assert(block->stmts);
+    }
+    (block->stmts)[block->size++] = stmt;
+}
 
 
 
