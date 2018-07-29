@@ -40,14 +40,14 @@
 
 
 
-program: stmt program  {interpret_stmt($1, main_st);}
+program: program stmt  {interpret_stmt($2, main_st);}
 |
 ;
 
 block : '{' stmt_array '}'  { $$ = $2;}
 ;
 
-stmt_array : stmt stmt_array { add_stmt($2, $1);}
+stmt_array : stmt_array stmt { add_stmt($1->node.block, $2);}
 |                            { $$ = Ast_node_block();}
 ;
 
