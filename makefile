@@ -25,4 +25,4 @@ lex.yy.c: lex.lex
 .PHONY: clean
 
 clean:
-	rm *.o a.out flavour parser.tab.*  *~ lex.yy.*
+	rm *.o a.out flavour parser.tab.*  *~ lex.yy.* gmon.out parser.output *TAGS GPATH

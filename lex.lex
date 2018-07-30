@@ -1,6 +1,7 @@
 %option noyywrap
 %option nounput
 %option noinput
+%option yylineno
 
 %{
 #include <stdio.h>
@@ -39,7 +40,7 @@ print return PRINT;
 ["].*["] {yylval.s = strdup(yytext); return TXT;}
 [a-zA-Z][a-zA-Z0-9_]* {yylval.s = strdup(yytext); return ID;}
 [-+*/()[\]{};!=,><] return yytext[0];
-[-]?[0-9]+ {yylval.i = atoi(yytext); return NUM;}
+[0-9]+ {yylval.i = atoi(yytext); return NUM;}
 
 
 [ \t\n] ;
