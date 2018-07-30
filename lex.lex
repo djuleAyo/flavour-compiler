@@ -16,12 +16,29 @@
 %}
 
 %%
-int {return INT;}
+while return WHILE;
+
+for return FOR;
+
+if return IF;
+then return THEN;
+else return ELSE;
+
+"<=" return LE;
+">=" return GE;
+"==" return EQ;
+"<" return LT;
+">" return GT;
+"!=" return NE;
+
+int return INT;
 string return STRING;
+
 print return PRINT;
+
 ["].*["] {yylval.s = strdup(yytext); return TXT;}
 [a-zA-Z][a-zA-Z0-9_]* {yylval.s = strdup(yytext); return ID;}
-[-+*/()[\]{};!=,] return yytext[0];
+[-+*/()[\]{};!=,><] return yytext[0];
 [-]?[0-9]+ {yylval.i = atoi(yytext); return NUM;}
 
 
