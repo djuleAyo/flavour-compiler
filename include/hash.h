@@ -1,6 +1,9 @@
-#pragma once
-
+#ifndef _HASH_H
+#define _HASH_H
 #include "flavour.h"
+
+//DEPENDENCIES
+#include "list.h"
 #include "pair.h"
 
 #define INITIAL_HASH_VOLUME 109
@@ -8,41 +11,37 @@
 //Since hash does not know what it holds it cannot free anything
 //The user of the hash is responsible for dealloc.
 
+/*Hash is using chaining for resolving collisions */
 
 //in case of key conflict error will occur
+//to update element use hash_update
 
-//=================================================================
-struct _bucket
-{
-    pair content;
-    struct _bucket *next;
-};
-typedef struct _bucket *bucket;
+//list in hash must contain pair as data
 
-bucket Bucket(string key, void* value);
-//replace
-//when deleting hash table from symbol table
-//first delete  pair, then delete bucket
-void free_bucket(bucket b);
-
-//=================================================================
 struct _hash
 {
   size_t volume;
   //hash can store as muche as needed but O(1) is no longer
   size_t size;
-  bucket *data;
+  list *data;
 };
 typedef struct _hash *hash;
 
-typedef void* pair_value;
-pair_value hash_find(hash h, string key);
-void hash_add(hash h, string key, pair_value value);
-pair_value hash_remove(hash h, string key);
-
-
-hash Hash();
-//TODO
-hash resize_Hash(size_t volume, size_t size);
-
+hash make_hash();
 void free_hash(hash h);
+
+pair hash_find(hash h, string k);
+void* hash_add(hash h, string k, void* v);
+//since hash cannot free value we return it to a caller
+void* hash_remove(hash h, string k);
+//return old value to a caller so it can be freed
+void* hash_update(hash h, string k, void* v);
+
+
+
+
+
+
+
+
+#endif

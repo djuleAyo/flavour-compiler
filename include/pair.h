@@ -1,16 +1,19 @@
-#pragma once
+#ifndef _PAIR_H
+#define _PAIR_H
 
-#include "basic_interface.h"
-
-typedef char* string;
+#include "flavour.h"
 
 struct _pair 
 {
   string key;
-  void *value;
+  void *data;
 };
 
 typedef struct _pair* pair;
 
-pair Pair(string key, void* value);
+pair make_pair(string key, void* value);
 void free_pair(pair p);
+
+bool pair_has_key(pair p, string k);
+
+#endif

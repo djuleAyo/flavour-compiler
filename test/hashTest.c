@@ -4,52 +4,58 @@
 
 
 
+typedef struct {
+  int a;
+  int b;
+} koordinate;
+
+
 int main()
 {
-    /*
-    bucket b = Bucket("key","vrednost");
+    hash h = make_hash();
     
-    free_bucket(b);
+    koordinate k;
+    k.a=2;
+    k.b=3;
     
     
-    hash h = Hash();
-    char *value = strdup("vrednost");
     
-    hash_add(h,"key", value);
-    //hash_remove(h,"key");
-    printf("%s\n",(char*)hash_remove(h,"key"));
+    int i;
+    for(i=0;i<10001;i++)
+    {
+        string key = malloc(10);
+        sprintf(key,"%d",i);
+        hash_add(h,key,&k);
+        free(key);
+    }
+    
+    pair p = hash_find(h, "5");
+    printf("%s\n",p->key);
+        
+    
+    koordinate uk;
+    uk.a = 100;
+    uk.b = 12;
+    
+    hash_update(h, "123", &uk);
+    
+    p = hash_find(h, "123");
+    printf("%s %d %d\n",p->key,((koordinate*)(p->data))->a ,((koordinate*)(p->data))->b);
+    
+    
+    p = hash_find(h, "asd");
+    assert(!p);
+    printf("hash_find nije nasao 'asd'\n");
+    p = hash_remove(h,"123");
+    p = hash_find(h,"123");
+    assert(!p);
+    printf("hash_find nije obrisao '123'\n");
+    
+    
+    
+    
     free_hash(h);
-    free(value);
     
-    
-    
-    */
-    hash h = Hash();
-    
-    stack s1 = Stack();
-    stack s2 = Stack();
-    stack s3 = Stack();
-    
-    hash_add(h, "s1", s1);
-    hash_add(h, "s2", s2);
-    hash_add(h, "s3", s3);
-    
-    
-    //printf("%s\n", hash_find(h,"s1") == hash_remove(h, "s1") ? "ok":"not ok");
-    
-    printf("s1: %ld == %ld\n", s1, hash_find(h, "s1"));
-    printf("s2: %ld == %ld\n", s2, hash_find(h, "s2"));
-    printf("s3: %ld == %ld\n", s3, hash_find(h, "s3"));
-
-    free_stack(s1);
-    free_stack(s2);
-    free_stack(s3);
-
-    hash_remove(h, "s1");
-    hash_remove(h, "s3");
-    hash_remove(h, "s2");
-    
-    free_hash(h);
     
     return 0;
 }

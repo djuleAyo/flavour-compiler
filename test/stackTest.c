@@ -15,20 +15,26 @@ int main()
 {
   
   printf("size of void* %d\n", (int)sizeof(void*));
-  stack s = Stack();
+  stack s = make_stack();
 
   int x = 3;
 
   for(int i = 0; i < TEST_SIZE; i++) {
-    push(s, &x);
+    stack_push(s, &x);
   }
   
   print_stack(s, stampaj_int);
   
+  printf("stack top:%d\n",*(int*)stack_top(s));
+  
   
   for(int i = 0; i < TEST_SIZE; i++) {
-    pop(s);
+    stack_pop(s);
   }
+  
+  int *n = stack_top(s);
+  printf("stack top %s\n", n?"ima":"nema");
+  
   
   print_stack(s, stampaj_int);
   

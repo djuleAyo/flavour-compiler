@@ -1,14 +1,15 @@
 #include "pair.h"
 #include "flavour.h"
-#include "basic_interface.h"
+#include "errors.h"
+#include <string.h>
 
-pair Pair(string key, void* value)
+pair make_pair(string k, void* v)
 {
   pair new = malloc(sizeof(struct _pair));
   assert(new);
 
-  new->key = strdup(key);
-  new->value = value;
+  new->key = strdup(k);
+  new->data = v;
 
   return new;
 }
@@ -19,23 +20,9 @@ void free_pair(pair p)
   free(p);
 }
 
-//REPLACE this implementation where it is needed
-/*
-#define OTHER_CHARS 10
-//to string function allocate memory and user needs to free it
-string pair_to_string(pair p)
+bool pair_has_key(pair p, string k)
 {
-  string val_str = value_to_string(p->value);
-  string ret_str = malloc(strlen(p->key)
-			  + OTHER_CHARS
-			  + strlen(val_str));
-
-  sprintf(ret_str, "(\"%s\", %s)", p->key, val_str);
-
-  free(val_str);
-  
-  return NULL;
+    if(!p || !k)
+        assert(!E_PAIR_HAS_KEY_INVAL);
+    return strcmp(p->key,k)?false:true;
 }
-#undef OTHER_CHARS
-
-*/

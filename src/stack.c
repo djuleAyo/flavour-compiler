@@ -1,9 +1,7 @@
 #include "stack.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
+#include "flavour.h"
 
-stack Stack()
+stack make_stack()
 {
   stack new = malloc(sizeof(struct _stack));
   assert(new);
@@ -41,7 +39,7 @@ stack expand_stack(stack s)
 }
 
 
-stack push(stack s, void* ptr)
+stack stack_push(stack s, void* ptr)
 {
   #ifdef STACK_TEST
   printf("before push volume: %d size: %d\n", s->volume, s->size);
@@ -55,21 +53,23 @@ stack push(stack s, void* ptr)
 
   return s;
 }
-void* pop(stack s)
+void* stack_pop(stack s)
 {
+    if(s->size == 0)
+        return NULL;
   void* ptr = (s->data)[s->size - 1];
   s->size--;
 
   if(s->size < s->volume / 2 && s->volume > STACK_INITIAL_VOLUME)
     s = shrink_stack(s);
-
-  
   
   return ptr;
 }
 
-void* top(stack s)
+void* stack_top(stack s)
 {
+    if(s->size == 0)
+        return NULL;
   return (s->data)[s->size - 1];
 }
 

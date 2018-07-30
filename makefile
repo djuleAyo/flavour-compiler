@@ -30,7 +30,7 @@ test-%: $(OBJECTS) test/%Test.o
 
 test/%Test.o: test/%Test.c 
 	$(CC) -c -o test/$*Test.o -MMD $^
-	
+
 -include $(OBJECTS:.o=.d)
 -include $(TESTS:.c=.d)
 -include lex.yy.d

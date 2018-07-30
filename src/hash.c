@@ -1,48 +1,46 @@
-#include "flavour.h"
 #include "hash.h"
 //pair is dependancie
-#include "pair.h"
+
+#include "flavour.h"
+
+//TODO hash resize_Hash(size_t volume, size_t size);
 
 unsigned long djb2(string  s);
 
 //when bucket is created key will be duplicated in memory
 //this dupicated key will be removed by bucket_free function
 //user is responisble for freeing passed key argument
-bucket Bucket(string key, void* value)
-{
-  bucket new = malloc(sizeof(struct _bucket));
-  assert(new);
 
-  new->content = Pair(key, value);
-  new->next = NULL;
-
-  return new;
-}
-
-void free_bucket(bucket b)
-{
-    if(!b)
-        return;
-    free_pair(b->content);
-    free(b);
-}
-
-
-//================================================================
-
-hash Hash()
+hash make_hash()
 {
   hash new = malloc(sizeof(struct _hash));
   assert(new);
 
   //must allocate data to NULL
-  new->data = calloc(sizeof(void*), INITIAL_HASH_VOLUME);
+  new->data = calloc(sizeof(list), INITIAL_HASH_VOLUME);
   assert(new->data);
 
   new->size = 0;
   new->volume = INITIAL_HASH_VOLUME;
 
   return new;
+}
+
+void free_hash(hash h)
+{
+    if(!h)
+        return;
+    unsigned i = 0;
+    for(i = 0; i < h->volume; i++)
+    {
+        if((h->data)[i])
+        {
+            list_iterate((h->data)[i], free_pair);
+            free_list(&((h->data)[i]));
+        }
+    } 
+    free(h->data);
+    free(h);
 }
 
 unsigned long djb2(string  str)
@@ -54,85 +52,53 @@ unsigned long djb2(string  str)
   return hash;
 }
 
-pair_value hash_find(hash h, string key)
+pair hash_find(hash h, string k)
 {
-  int index =(int)(djb2(key) % h->volume);
-  if((h->data)[index])
-  {
-    bucket tmp = (h->data)[index];
-    while(tmp)
-    {
-      if(!strcmp(tmp->content->key, key))
-        return tmp->content;
-      else
-        tmp = tmp->next;
-    }
-  }
-  return NULL;
+  int index =(int)(djb2(k) % h->volume);
+  pair p = (pair)list_find((h->data)[index], k , pair_has_key);
+  return p;
 }
 
 
-//new buckets are stored at the end of bucket list because we want
+//new lists are stored at the end of data list because we want
 //to check all previous keys for no duplicates
-void hash_add(hash h, string key, pair_value value)
+void* hash_add(hash h, string k, void* v)
 {
   //TODO resize of hash when average list length is greater then 2
 
-  int index =(int)(djb2(key) % h->volume);
+    pair p = hash_find(h, k);
+    if(p)
+        assert(!E_HASH_DUPLICATE_KEY);
+    
+  int index =(int)(djb2(k) % h->volume);
   if(!((h->data)[index]))
   {
-    (h->data)[index] = Bucket(key, value);
-    return;
+    list_add_start(&((h->data)[index]), make_pair(k,v));
+    return v;
   }
   
-  bucket tmp = (h->data)[index];
-  if(!strcmp(tmp->content->key, key))
-      assert(0);
-  while(tmp->next)
-  {
-    if(!strcmp(tmp->content->key, key))
-      assert(0);
-    else
-      tmp = tmp->next;
-  }
-  tmp->next = Bucket(key, value);
+  list_add_end(&((h->data)[index]), make_pair(k,v));
+  return v;
 }
 
-pair_value hash_remove(hash h, string key)
+void* hash_remove(hash h, string k)
 {
-  int index =(int)(djb2(key) % h->volume);
+  int index =(int)(djb2(k) % h->volume);
   
   if(!((h->data)[index]))
     return NULL;
-  
-  //if key was first in list of buckets
-  bucket tmp = (h->data)[index];
-  pair ret_val;
-  if(!strcmp(tmp->content->key, key))
-  {
-    (h->data)[index] = tmp->next;
-    ret_val = tmp->content->value;
-    free_bucket(tmp);
-    return ret_val;
-  }
-  //otherwise
-  while(tmp->next)
-  {
-    if(!strcmp(tmp->next->content->key, key))
-    {
-      bucket del_tmp = tmp->next;
-      tmp->next = tmp->next->next;
-      ret_val = tmp->next->content->value;
-      free_bucket(del_tmp);
-      return ret_val;
-    }
-    tmp = tmp->next;
-  }
-  return NULL;
+  pair p = list_remove(&((h->data)[index]),k, pair_has_key);
+  void *tmp = p->data;
+  free_pair(p);
+  return tmp;
 }
 
-void free_hash(hash h)
+void* hash_update(hash h, string k, void *v)
 {
-  free(h->data);
-  free(h);
+    pair p = hash_find(h,k);
+    if(!p)
+        assert(!E_HASH_NOENT_UPDATE);
+    void *tmp = p->data;
+    p->data = v;
+    return tmp;
 }
