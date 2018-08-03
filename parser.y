@@ -33,7 +33,7 @@ void yyerror(string msg)
   ast_node n;
 };
 
-%token PRINT INT STRING WHILE IF ELSE THEN FOR
+%token PRINT INT STRING WHILE IF ELSE THEN FOR STRUCT
 %token LE GE GT LT EQ NE
 %token<i> NUM
 %token<s> ID TXT
@@ -62,12 +62,36 @@ stmt_array : stmt_array stmt {/* add_stmt($1->node.block, $2);*/}
 |                            {/* $$ = Ast_node_block();*/}
 ;
 
+def: INT ID '=' E ';'            {}
+| STRING ID '=' E ';'            {}
+| STRUCT ID '{' decl_array '}'   {}
+;
+
+decl_array: decl_array decl  {}
+|                            {}
+;
+
+decl : INT ID ';'            {}
+| STRING ID ';'              {}
+| STRUCT ID ID ';'              {}
+;
+
 stmt: PRINT E ';'      {/* $$ = Ast_node_un_oper(OP_PRINT, $2); */}
-| INT  ID '=' E ';'    {/*$$ = Ast_node_bin_oper(OP_DEF, Ast_node_id($2), $4);*/}
-| STRING ID '=' E ';'  {/*$$ = Ast_node_bin_oper(OP_DEF, Ast_node_id($2), $4);*/}
+| def   {}
+| decl  {}
 | block                {/* $$ = $1; */}
 | WHILE '(' E ')' stmt {/*$$ = Ast_node_bin_oper(OP_WHILE, $3, $5);*/}
-| ID '=' E ';'         {/*$$ = Ast_node_bin_oper(OP_ASSIG, Ast_node_id($1), $3);*/}
+| ID '=' E ';'         {/*$ = Ast_node_bin_oper(OP_ASSIG, Ast_node_id($1), $3);*/}
+| STRUCT ID ID  '{' litteral_array '}' {printf("struct id id { literal array }\n");}
+;
+
+litteral_array: litteral        {printf("litteral_array: litteral\n");}
+| litteral_array  ',' litteral  {printf("litteral_array  ',' litteral\n");}
+;
+
+litteral: '{' litteral_array '}' {printf("'{' litteral_array '}'\n");}
+| NUM                            {printf("NUM\n");}
+| TXT                            {printf("TXT\n");}
 ;
 
 

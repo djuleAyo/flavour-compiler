@@ -2,6 +2,7 @@
 
 #include "flavour.h"
 
+//basic_interface is interface every obj implements
 struct _basic_interface
 {
   string (*toString)(void*);
@@ -15,3 +16,4 @@ extern struct _basic_interface basic_interface_int;
 extern struct _basic_interface basic_interface_string;
 
 void init_basic_interfaces();
+string intToString(void* x);

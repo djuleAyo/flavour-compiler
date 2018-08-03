@@ -18,10 +18,8 @@ int main()
     k.a=2;
     k.b=3;
     
-    
-    
     int i;
-    for(i=0;i<10001;i++)
+    for(i=0;i<100001;i++)
     {
         string key = malloc(10);
         sprintf(key,"%d",i);
