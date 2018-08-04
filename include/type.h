@@ -12,10 +12,11 @@ typedef enum {
 
 typedef enum {
   TYPE_BASIC_NODE,
-  TYPE_COMPOSITE_NODE
+  TYPE_COMPOSITE_NODE,
+  TYPE_FUNCTION_NODE
 } type_node_type;
 
-
+//==============================================================================
 
 //type is tree of given type. every struct of the tree has type prefix
 struct _type_basic_node {
@@ -37,11 +38,22 @@ struct _type_composite_node {
 typedef struct _type_composite_node* type_composite_node;
 
 type make_type_composite_node(string name, string propertie);
-void add_node_to_composite(type_composite_node comp, type node);
 void free_type_composite_node(type_composite_node n);
 
-//==============================================================================
+void add_node_to_composite(type_composite_node comp, type node);
 
+//==============================================================================
+struct _type_function_node {
+  type return_type;
+  type arguments;
+};
+
+typedef struct _type_function_node* type_function_node;
+
+type make_type_function_node(type rt, type args);
+void free_type_function_node(type_function_node n);
+
+//==============================================================================
 
 struct _type {
   bool offset_initialized;
@@ -52,6 +64,7 @@ struct _type {
   union {
     type_basic_node basic_node;
     type_composite_node composite_node;
+    type_function_node function_node;
   } node;
 };
 

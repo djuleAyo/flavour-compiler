@@ -9,7 +9,15 @@
 #define E_TYPE_ACCESS 3
 #define E_WRONG_TYPE 4
 
+
+//pair error
 #define E_PAIR_HAS_KEY_INVAL 5
+
+
+//lambda errors
+#define E_LAMBDA_MULTY_DEF 6
+#define E_LAMBDA_NOENT 7
+#define E_LAMBDA_NOT_LAMBDA 8
 
 
 #endif

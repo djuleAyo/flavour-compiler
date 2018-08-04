@@ -2,6 +2,7 @@
 #include "list.h"
 
 int main() {
+  /*
   type c = make_type_composite_node("struct B", "prop1");
 
   type i1 = make_type_basic_node(BASIC_TYPE_INT, "a");
@@ -12,13 +13,13 @@ int main() {
   type i3 = make_type_basic_node(BASIC_TYPE_STRING, "b");
 
 
-  /*
+
   for(int i = 0; i < 1000; i++) {
     add_node_to_composite(c->node.composite_node,
                           make_type_basic_node(BASIC_TYPE_STRING, )
                           );
   }
-  */
+
 
   add_node_to_composite(c->node.composite_node, i1);
   add_node_to_composite(c->node.composite_node, i2);
@@ -45,4 +46,37 @@ int main() {
   free(tmp);
 
   free_type(A);
+  */
+  //====================================================================
+
+
+  //struct
+  type t1 = make_type_basic_node(BASIC_TYPE_INT, "a");
+  /* type t2 = make_type_basic_node(BASIC_TYPE_INT, "b"); */
+  /* type t3 = make_type_basic_node(BASIC_TYPE_INT, NULL); */
+  /* type t4 = make_type_basic_node(BASIC_TYPE_STRING, NULL); */
+
+  type arg_list = make_type_composite_node("struct B", "prop1");
+  add_node_to_composite(arg_list->node.composite_node, t1);
+  add_node_to_composite(arg_list->node.composite_node, t1);
+
+
+  type f1 = make_type_function_node(arg_list, t1);
+  type f2 = make_type_function_node(f1, t1);
+
+
+  string tmp = type_to_string(f2);
+
+  printf("%s\n", tmp);
+  free(tmp);
+
+  free_type(t1);
+  /* free_type(t2); */
+  /* free_type(t3); */
+  /* free_type(t4); */
+  free_type(f1);
+  free_type(f2);
+  free_type(arg_list);
+  return 0;
 }
+

@@ -8,11 +8,12 @@ void free_object(object o)
 }
 
 object make_object(type t, list arguments) {
+
   object new = malloc(sizeof(struct _object));
   assert(new);
-
   new->type_val = t;
 
+  //IF BASE TYPE
   if(!strcmp(t->name, "int") || !strcmp(t->name, "string")) {
     if(t->node.basic_node->type == BASIC_TYPE_INT)
       {
@@ -26,10 +27,9 @@ object make_object(type t, list arguments) {
     return new;
   }
 
+  //for either func or composite we initialize taken memory
   void* value = object_initialize(t, arguments);
-
   new->data = value;
-
   return new;
 }
 
