@@ -3,10 +3,11 @@
 #include "flavour.h"
 
 
-lambda make_lambda(type t, ast_node ast, stack parrenting_scope)
+lambda make_lambda(type t, ast_node ast, scope parrenting_scope)
 {
   if(t->node_type != TYPE_FUNCTION_NODE)
     assert(!E_LAMBDA_NOT_LAMBDA);
+
   lambda new = malloc(sizeof(struct _object));
   assert (new);
 
@@ -17,7 +18,7 @@ lambda make_lambda(type t, ast_node ast, stack parrenting_scope)
   mew_val->next = NULL;
 
 
-
+  //OVA PROVJERA NE TREBA ? RADI JE RODITELJ? lambda moze da vrati ne lambda i da ima pareting scope
   if(t->node.function_node->return_type->node_type == TYPE_FUNCTION_NODE)
     {
       new_val->parenting_scopes = parrenting_scope;
@@ -39,6 +40,8 @@ void free_lambda(lambda lambda_list)
 
   //dont free shared resources - ast and non 1st pareting_scope
   stack parrenting_scopes = ((lambda_value)(lamdba_list->value))->parenting_scopes;
+
+  //a funciton can return only 1 lambda
   if(parrenting_scopes->size)
     {
       free_scope(stack_pop(parrenting_scopes));

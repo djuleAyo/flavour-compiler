@@ -1,7 +1,6 @@
 #ifndef _LAMBDA_H
 #define _LAMBDA_H
 
-#include "stack.h"
 #include "scope.h"
 
 #include "ast.h"
@@ -14,12 +13,8 @@
 struct _lambda_value {
   //shared resource - ptr to subtree of whole programm
   ast_node ast;
-  //may remove only 1st instance of parent since others are shared
-  stack parenting_scopes;
-  //must be lambda
-  /* not using implemented list because it requires definition
-     of new type that is not exposed to in flavour language - overload type */
-  lambda next;
+  scope parenting_scope;
+  lambda next_overload;
 };
 typedef struct _lambda_value* lambda_value;
 

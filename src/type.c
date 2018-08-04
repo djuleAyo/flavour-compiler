@@ -332,41 +332,43 @@ bool type_equals(type t1, type t2)
     {
     case TYPE_BASIC_NODE:
       {
-	if(t1->node.basic_node->type != t2->node.basic_node->type)
-	  return false;
-	else
-	  return true;
+        if(t1->node.basic_node->type != t2->node.basic_node->type)
+          return false;
+        else
+          return true;
       }
       break;
     case TYPE_FUNCTION_NODE:
       {
-	if((type_equals(t1->node.function_node->return_type, t2->node.function_node->return_type)==true) && (type_equals(t1->node.function_node->arguments, t2->node.function_node->arguments)==true))
-	  return true;
-	else
-	  return false;
+        if((type_equals(t1->node.function_node->return_type, t2->node.function_node->return_type)==true)
+           && (type_equals(t1->node.function_node->arguments, t2->node.function_node->arguments)==true))
+          return true;
+        else
+          return false;
       }
       break;
     case TYPE_COMPOSITE_NODE:
       {
-	if(t1->node.composite_node->size != t2->node.composite_node->size)
-	  return false;
-	if(t1->name && t2->name)
-	  if(strcmp(t1->name, t2->name))
-	    return false;
-	  else
-	    return true;
-	
-	unsigned i;
-	bool ret = false;
-	for(i=0; i < t1->node.composite_node->size; i++)
-	  {
-	    ret = type_equals((t1->node.composite_node->nodes)[i], (t2->node.composite_node->nodes)[i]);
-	    if(!ret)
-	      return false;
-	  }
-	
-	return true;
-      }      
+        if(t1->node.composite_node->size != t2->node.composite_node->size)
+          return false;
+        if(t1->name && t2->name) {
+          if(strcmp(t1->name, t2->name))
+            return false;
+          else
+            return true;
+        }
+
+        unsigned i;
+        bool ret = false;
+        for(i=0; i < t1->node.composite_node->size; i++)
+          {
+            ret = type_equals((t1->node.composite_node->nodes)[i], (t2->node.composite_node->nodes)[i]);
+            if(!ret)
+              return false;
+          }
+
+        return true;
+      }
       break;
     default:
       assert(!E_WRONG_TYPE);

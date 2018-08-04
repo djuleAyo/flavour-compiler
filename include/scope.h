@@ -7,7 +7,19 @@
    into object.
 */
 
-typedef hash scope;
+
+//scope parrent is scope where cur scope is created
+//lambda parrent is scope where cur lambda is created
+
+
+struct _scope {
+  unsigned ref_count;
+  hash table;
+  struct _scope* parrent;
+
+
+};
+typedef _scope* scope;
 
 object scope_add(string key, object o) {
   hash_add(key, o);
