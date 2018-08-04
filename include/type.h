@@ -81,6 +81,8 @@ type get_ith_leaf(type t,int i);
 
 void* fv_alloc(type t);
 
+bool type_equals(type t1, type t2);
+
 /*
   type koren;
 
