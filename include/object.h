@@ -5,6 +5,11 @@
 #include "flavour.h"
 #include "list.h"
 
+#include "basic.h"
+#include "struct.h"
+#include "lambda.h"
+
+
 struct _object {
   type type_val;
   void* data;
@@ -15,19 +20,12 @@ typedef struct _object* object;
 /* module - object stores object type name and ptr to value it holds.
  */
 
-object make_object(type t, list arguments);
+//mulitple constructors because every object takes different parameters
+//but single unified free. it frees every object type
 void free_object(object o);
+string object_to_string(object o);
 
-//arguments takes 1 node for basic type and node contains
-//void* ptr to int or void* ptr to dynamicaly allocated string
-
-//if t is composite arguments take list of objects
-//args must be objects to do semantical analisis (remember types
-// in those objects)
-
-//if t is func then arguments are func args - objects
-void* object_initialize(type t, list arguments);
-
+object clone_object(object o);
 
 
 #endif

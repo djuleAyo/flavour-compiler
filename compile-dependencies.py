@@ -23,6 +23,8 @@ for header in neededHeaders[2:].split(' '):
 
 compileTest = "gcc -g -Iinclude -Wall -Wextra " + sys.argv[1]+"Test.o -o test/"+sys.argv[1]
 
+dependencies = list(set(dependencies))
+
 for dep in dependencies:
     compileTest += " "+dep
 

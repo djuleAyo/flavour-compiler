@@ -1,6 +1,6 @@
-#pragma once
+#ifndef _SYM_DATA_H
+#define _SYM_DATA_H
 #include "basic_interface.h"
-#include "types.h"
 #include "object.h"
 
 typedef union
@@ -23,3 +23,5 @@ sym_data make_sym_data(sym_data_union u, void* data);
 
 
 void free_sym_data(sym_data s);
+
+#endif

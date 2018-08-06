@@ -5,7 +5,6 @@
 
 //TODO hash resize_Hash(size_t volume, size_t size);
 
-unsigned long djb2(string  s);
 
 //when bucket is created key will be duplicated in memory
 //this dupicated key will be removed by bucket_free function
@@ -43,11 +42,11 @@ void free_hash(hash h)
     free(h);
 }
 
-unsigned long djb2(string  str)
+unsigned djb2(string key)
 {
   unsigned long hash = 5381;
   int c;
-  while ((c = *str++))
+  while ((c = *key++))
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
   return hash;
 }
@@ -66,9 +65,9 @@ void* hash_add(hash h, string k, void* v)
 {
   //TODO resize of hash when average list length is greater then 2
 
-    pair p = hash_find(h, k);
-    if(p)
-        assert(!E_HASH_DUPLICATE_KEY);
+    /* pair p = hash_find(h, k); */
+    /* if(p) */
+    /*     assert(!E_HASH_DUPLICATE_KEY); */
     
   int index =(int)(djb2(k) % h->volume);
   if(!((h->data)[index]))

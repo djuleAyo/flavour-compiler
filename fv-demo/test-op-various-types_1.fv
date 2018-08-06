@@ -1,0 +1,18 @@
+int i = 3;
+string s = 5;
+
+print i * s;
+print i + s;
+
+/*
+struct A {
+       int int_prop;
+       string string_prop;
+}
+
+struct A a_struct {10, "hello initializer lists"}
+
+print a_struct.int_prop
+print a_struct.string_prop
+
+*/

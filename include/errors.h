@@ -19,5 +19,8 @@
 #define E_LAMBDA_NOENT 7
 #define E_LAMBDA_NOT_LAMBDA 8
 
+//scope errors
+#define E_SCOPE_OBJECT_EXIST 9
+
 
 #endif

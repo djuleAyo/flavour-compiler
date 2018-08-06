@@ -38,10 +38,6 @@ void* hash_remove(hash h, string k);
 void* hash_update(hash h, string k, void* v);
 
 
-
-
-
-
-
+unsigned djb2(string key);
 
 #endif

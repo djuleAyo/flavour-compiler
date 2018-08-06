@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _OP_NODE_MACROS_H
+#define _OP_NODE_MACROS_H
 
 #define OP_LT 'a'
 #define OP_GT 'b'
@@ -17,3 +18,5 @@
 #define OP_ELSE 'E'
 
 #define OP_PRINT 'p'
+
+#endif

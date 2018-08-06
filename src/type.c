@@ -1,5 +1,27 @@
 #include "type.h"
 
+type int_type;
+type string_type;
+
+void init_basic_types()
+{
+  int_type = make_type_basic_node(BASIC_TYPE_INT, NULL);
+  string_type = make_type_basic_node(BASIC_TYPE_STRING, NULL);
+}
+
+type clone_lambda_type(type t)
+{
+  assert(t->node_type == TYPE_FUNCTION_NODE);
+
+  return make_type_function_node(t->node.function_node->return_type, t->node.function_node->arguments);
+}
+
+void deinit_basic_types()
+{
+  free_type(int_type);
+  free_type(string_type);
+}
+
 type make_type_basic_node(basic_types_enum t, string propertie)
 {
   type_basic_node new = malloc(sizeof(struct _type_basic_node));
@@ -17,6 +39,18 @@ void free_type_basic_node(type_basic_node n)
   free(n);
 }
 
+type make_type_type_node()
+{
+  type t = make_type("type", NULL);
+
+  t->node_type = TYPE_TYPE_NODE;
+  //all union fields are ptrs so we will init ANY of them on NULL
+  t->node.basic_node = NULL;
+
+  return t;
+}
+
+
 type make_type_composite_node(string name, string propertie)
 {
   type_composite_node new = malloc(sizeof(struct _type_composite_node));
@@ -33,7 +67,7 @@ type make_type_composite_node(string name, string propertie)
 
   return wrapper;
 }
-void add_node_to_composite(type_composite_node comp, type node)
+void add_node_to_composite(type_composite_node comp, type node, string propertie)
 {
   if(comp->size == comp->volume) {
     comp->volume *= 2;
@@ -41,7 +75,8 @@ void add_node_to_composite(type_composite_node comp, type node)
     assert(comp->nodes);
   }
 
-  (comp->nodes)[comp->size++] = node;
+  (comp->nodes)[comp->size] = node;
+  (comp->nodes)[comp->size++]->propertie = strdup(propertie);
 }
 void free_type_composite_node(type_composite_node n)
 {
@@ -140,6 +175,9 @@ void free_type(type t)
   case TYPE_FUNCTION_NODE:
     free_type_function_node(t->node.function_node);
     break;
+  case TYPE_TYPE_NODE:
+    //nothing to be done
+    break;
   }
   free(t->name);
   free(t->propertie);
@@ -165,6 +203,9 @@ string type_to_string(type t)
   case TYPE_FUNCTION_NODE:
     goto function;
     break;
+  case TYPE_TYPE_NODE:
+    goto type;
+    break;
   }
 
  basic:
@@ -176,6 +217,10 @@ string type_to_string(type t)
     type_name =  strdup("string");
     break;
   }
+  goto exit;
+
+ type:
+  type_name = strdup("type");
   goto exit;
 
  function:
@@ -231,24 +276,6 @@ string type_to_string(type t)
 }
 
 
-unsigned operator_dot(type t, string propertie)
-{
-  if(t->node_type != TYPE_COMPOSITE_NODE)
-    assert(!E_TYPE_ACCESS);
-  if(!t->offset_initialized)
-    {
-      operator_sizeof(t);
-    }
-  for(unsigned i = 0; i < t->node.composite_node->size; i++)
-    {
-      if(!strcmp((t->node.composite_node->nodes)[i]->propertie, propertie))
-        {
-          return (t->node.composite_node->nodes)[i]->offset;
-        }
-    }
-  assert(!E_TYPE_ACCESS);
-}
-
 unsigned operator_sizeof(type t)
 {
   if(t->node_type == TYPE_BASIC_NODE)
@@ -280,13 +307,6 @@ void* fv_alloc(type t)
   assert(tmp);
   return tmp;
 }
-
-
-//TODO napraviti za user defined tipove
-
-/* if ptr is NULL no memory will be allocated and
-   default constructor will */
-
 
 
 type _get_ith_leaf(type t, int i, int* j)

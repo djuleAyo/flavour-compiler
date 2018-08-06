@@ -8,13 +8,22 @@ typedef struct _type* type;
 typedef enum {
   BASIC_TYPE_INT,
   BASIC_TYPE_STRING,
-} basic_types_enum;
+  } basic_types_enum;
 
 typedef enum {
   TYPE_BASIC_NODE,
   TYPE_COMPOSITE_NODE,
-  TYPE_FUNCTION_NODE
+  TYPE_FUNCTION_NODE,
+  TYPE_TYPE_NODE,
+
 } type_node_type;
+
+
+//USE THIS EVERY TIME WHEN USING BASIC TYPES
+extern type int_type;
+extern type string_type;
+void init_basic_types();
+void deinit_basic_types();
 
 //==============================================================================
 
@@ -27,9 +36,11 @@ typedef struct _type_basic_node* type_basic_node;
 type make_type_basic_node(basic_types_enum t, string propertie);
 void free_type_basic_node(type_basic_node n);
 //==============================================================================
+type make_type_type_node();
+//==============================================================================
 
 //if volume is 1 make it 10. 1 is set for testing - to test reallocs
-#define INITIAL_COMPOSITE_NODE_VOLUME 1
+#define INITIAL_COMPOSITE_NODE_VOLUME 10
 struct _type_composite_node {
   unsigned volume;
   unsigned size;
@@ -40,7 +51,7 @@ typedef struct _type_composite_node* type_composite_node;
 type make_type_composite_node(string name, string propertie);
 void free_type_composite_node(type_composite_node n);
 
-void add_node_to_composite(type_composite_node comp, type node);
+void add_node_to_composite(type_composite_node comp, type node, string propertie);
 
 //==============================================================================
 struct _type_function_node {
@@ -72,12 +83,14 @@ struct _type {
 
 type make_type(string name, string propertie);
 void free_type(type t);
+type clone_lambda_type(type t);
+
 string type_to_string(type t);
 
 unsigned operator_sizeof(type t);
-unsigned operator_dot(type t, string propertie);
 
 type get_ith_leaf(type t,int i);
+
 
 void* fv_alloc(type t);
 

@@ -1,7 +1,0 @@
-print test1;
-print test2;
-print 3;
-print "aoeu";
-
-int a = 3;
-print a;

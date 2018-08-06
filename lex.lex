@@ -11,20 +11,21 @@
     exit(1);
   }
 
-#include "types.h"
-#include "ast.h"
+#include "flavour.h"
 #include "parser.tab.h"
 %}
 
 %%
 while return WHILE;
-
 for return FOR;
 struct return STRUCT;
-
 if return IF;
 then return THEN;
 else return ELSE;
+int return INT;
+string return STRING;
+print return PRINT;
+
 
 "<=" return LE;
 ">=" return GE;
@@ -33,18 +34,22 @@ else return ELSE;
 ">" return GT;
 "!=" return NE;
 
-int return INT;
-string return STRING;
 
-print return PRINT;
-
-["][^"\n]*["] {yylval.s = NULL; /*strdup(yytext);*/ return TXT;}
-[a-zA-Z][a-zA-Z0-9_]* {yylval.s =NULL;/* strdup(yytext);  */return ID;}
+["][^"\n]*["] {yylval.s = NULL; strdup(yytext); return TXT;}
+[a-zA-Z][a-zA-Z0-9_]* {yylval.s =NULL; strdup(yytext); return ID;}
 [-+*/()[\]{};!=,><] return yytext[0];
 [0-9]+ {yylval.i = atoi(yytext); return NUM;}
 
 
+[/][*]([^*]|[*]+[^/])*[*]+[/] ;
 [ \t\n] ;
 . error();
 
 %%
+
+#ifdef LEX_SA
+int main() {
+int i;
+  while(i = yylex());
+}
+#endif

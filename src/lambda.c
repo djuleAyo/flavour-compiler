@@ -3,10 +3,11 @@
 #include "flavour.h"
 
 
-lambda make_lambda(type t, ast_node ast, scope parrenting_scope)
+lambda make_lambda(type t, ast_node ast, scope lambda_parrent)
 {
   if(t->node_type != TYPE_FUNCTION_NODE)
     assert(!E_LAMBDA_NOT_LAMBDA);
+  assert(lambda_parrent && "cant make lambda without lambda parrent");
 
   lambda new = malloc(sizeof(struct _object));
   assert (new);
@@ -15,89 +16,62 @@ lambda make_lambda(type t, ast_node ast, scope parrenting_scope)
   assert(new_val);
 
   new_val->ast = ast;
-  mew_val->next = NULL;
+  new_val->lambda_parrent = lambda_parrent;
+  lambda_parrent->ref_count++;
 
-
-  //OVA PROVJERA NE TREBA ? RADI JE RODITELJ? lambda moze da vrati ne lambda i da ima pareting scope
-  if(t->node.function_node->return_type->node_type == TYPE_FUNCTION_NODE)
-    {
-      new_val->parenting_scopes = parrenting_scope;
-    }
-  else
-    {
-      new_val->pareting_scope = NULL;
-    }
-
-  new->type = t;
-  new->value = new_val;
+  new->type_val = t;
+  new->data = new_val;
 
   return new;
-
 }
-void free_lambda(lambda lambda_list)
+
+//does not free shared resources - ast
+void free_lambda(lambda l)
 {
-  if(!lambda_list) return;
+  if(!l) return;
 
-  //dont free shared resources - ast and non 1st pareting_scope
-  stack parrenting_scopes = ((lambda_value)(lamdba_list->value))->parenting_scopes;
+  scope s = ((lambda_value)(l->data))->lambda_parrent;
 
-  //a funciton can return only 1 lambda
-  if(parrenting_scopes->size)
+  s->ref_count--;
+
+  if((s->ref_count == 0) && (s != current_scope))
     {
-      free_scope(stack_pop(parrenting_scopes));
+      free_scope_branch(s);
     }
-  free_lambda(((lambda_value)(lamdba_list->value))->next);
+
+  free(l->data);
+  free_type(l->type_val);
+  free(l);
 }
 
-//returns same lamda as sent in for chaining
-lambda lambda_add_overload(lambda* lambda_list, type t, ast_node ast, stack parentning_scope)
+
+lambda clone_lambda(lambda l)
 {
-  if(!(*lambda_list))
-    {
-      *lambda_list = make_lambda(t,ast,parentning_scope );
-      return *lambda_list;
-    }
-  if(type_equals(t, (*lambda_list)->type))
-    assert(!E_LAMBDA_MULTY_DEF);
-
-  lambda tmp =*lamdba_list;
-  lambda next_tmp = ((lambda_value)(tmp->value))->next;
-
-
-  while(next_tmp)
-    {
-      if(type_equals( next_tmp->type, t))
-        assert(!E_LAMBDA_MULTY_DEF);
-      tmp = next_tmp;
-      next_tmp = ((lambda_value)(next_tmp->value))->next;
-    }
-  (((lambda_value)(tmp->value))->next = make_lambda(t, ast, parentning_scope);
-  return ((lambda_value)(tmp->value))->next;
+  return make_lambda(clone_lambda_type(l->type_val),
+                     ((lambda_value)(l->data))->ast,
+                     ((lambda_value)(l->data))->lambda_parrent);
 }
 
-lambda lambda_find_overload(lambda lambda_list, type t)
-{
-  if(!lambda_list)
-    return NULL;
-  if(type_equals(lambda_list->type, t))
-    return lambda_list;
-  return lambda_find_overload( ((lambda_value)(lambda_list))->next, t);
-}
 
 //updates ast
-lambda lambda_update(lambda lambda_list, type t, ast_node ast)
+lambda lambda_define(lambda l, ast_node ast)
 {
-  lambda update = lambda_find_overload(lambda_list, t);
-  if(!update)
-    assert(!E_LAMBDA_NOENT);
-  ((lambda_value)(update->value))->ast = ast;
-  ((lambda_value)(update->value))->type = t;
+  if(((lambda_value)(l->data))->ast)
+    assert(0 && "function already defined\n");
 
-  return update;
+  ((lambda_value)(l->data))->ast = ast;
+
+  return l;
 }
+
 //a lambda can return ANY object type - this is runtime function - must be
 //ported to executable. Takes list of objects
-object lambda_execute(lambda lambda_list,  list args)
+object lambda_execute(lambda l, list args, scope current_scope)
 {
-
-}
+  UNUSED(l);
+  UNUSED(args);
+  UNUSED(current_scope);
+  //makes new scope as a leaf of execution branch - stack
+  //
+  return NULL;
+  }

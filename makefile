@@ -23,7 +23,7 @@ lex.yy.o: lex.yy.c
 	$(CC) -c -MMD $^
 
 lex.yy.c: lex.lex
-	lex $^
+	flex $^
 
 #tests##################################
 test-%: test/%Test.o
@@ -42,7 +42,6 @@ module-%:
 	touch src/$*.c
 	echo \#include \"$*.h\" > src/$*.c
 	echo \#include \"flavour.h\" >> src/$*.c
-
 	touch test/$*Test.c
 	echo \#include \"$*.h\" > test/$*Test.c
 	echo int main\(\) {} >> test/$*Test.c
