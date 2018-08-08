@@ -18,7 +18,7 @@ object operator_dot(struct_object o, string propertie) {
   assert(o->type_val->node_type == TYPE_COMPOSITE_NODE
          && "Using operator dot on an object that is not of composite type\n");
 
-  for(unsigned i = ; i < o->type_val->node.composite_node->size; i++) {
+  for(unsigned i = 0; i < o->type_val->node.composite_node->size; i++) {
     if(!strcmp((o->type_val->node.composite_node->nodes)[i]->propertie,
                propertie)) {
       new->type_val = (o->type_val->node.composite_node->nodes)[i];
@@ -35,13 +35,21 @@ object make_struct(type t, list arguments)
 
   type tmp;
   obj_val = fv_alloc(t);
-  int i  = ;
+
+  unsigned total_offset = 0;
+
+  int i  = 0;
   list_node iterator = arguments;
   while((tmp = get_ith_leaf(t, i)))
     {
 
-      memcpy((((char*)obj_val)+tmp->offset), ((object)(iterator->data))->data, sizeof(void*));
+      memcpy((((char*)obj_val) + total_offset + tmp->offset),
+             iterator->data,
+             operator_sizeof(tmp));
+
       iterator = iterator->next;
+
+      total_offset += operator_sizeof(tmp);
       i++;
     }
 

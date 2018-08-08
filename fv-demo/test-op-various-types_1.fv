@@ -1,18 +1,21 @@
-int i = 3;
-string s = 5;
+/* expressions and operators */
+int i = ((3 + 5) / 2 * 7 < 1) + 3;
+string s = "" + i;
 
+print s;
 print i * s;
-print i + s;
 
-/*
+/*=========================================*/
+
+/*stuctures and intializer lists*/
 struct A {
        int int_prop;
        string string_prop;
 }
-
 struct A a_struct {10, "hello initializer lists"}
+  struct A b_struct = a_struct;
 
-print a_struct.int_prop
-print a_struct.string_prop
+b_struct.int_prop = 3;
 
-*/
+print a_struct.int_prop;
+print b_struct.int_prop;

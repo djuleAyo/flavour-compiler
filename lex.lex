@@ -12,6 +12,7 @@
   }
 
 #include "flavour.h"
+#include "ast_new.h"
 #include "parser.tab.h"
 %}
 
@@ -37,7 +38,7 @@ print return PRINT;
 
 ["][^"\n]*["] {yylval.s = NULL; strdup(yytext); return TXT;}
 [a-zA-Z][a-zA-Z0-9_]* {yylval.s =NULL; strdup(yytext); return ID;}
-[-+*/()[\]{};!=,><] return yytext[0];
+[-+*/()[\]{};!=.,><] return yytext[0];
 [0-9]+ {yylval.i = atoi(yytext); return NUM;}
 
 

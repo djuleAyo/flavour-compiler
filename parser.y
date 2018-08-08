@@ -4,10 +4,14 @@
 #include <string.h>
 
 #include "op_node_macros.h"
+#include "ast_new.h"
 #include "flavour.h"
 
 extern int yylineno;
 extern int yylex();
+
+ init_basic_types();
+ init_scope();
 
 void yyerror(string msg)
 {
@@ -19,6 +23,7 @@ void yyerror(string msg)
 %union {
   int i;
   string s;
+  ast_node ast;
 };
 
 %token PRINT INT STRING WHILE IF ELSE THEN FOR STRUCT
@@ -26,12 +31,15 @@ void yyerror(string msg)
 %token<i> NUM
 %token<s> ID TXT
 
+%type<ast> litteral E
+
 
 %left NE EQ
 %left LE GE LT GT
 %left '+' '-'
 %left '*' '/'
 %nonassoc UMINUS
+%left '.'
 
 %start program;
 %%
@@ -58,16 +66,14 @@ decl_array: decl_array decl  {}
 |                            {}
 ;
 
-decl : INT ID ';'            {}
-| STRING ID ';'              {}
-| STRUCT ID ID ';'              {}
-;
+decl : type ID ';'     {}
 
-stmt: PRINT  E ';'      {}
+stmt: PRINT  E ';'      {printf("%d", $2->data.int_con);}
 | def   {}
 | decl  {}
-| block                {}
+| block                {printf("block\n");}
 | WHILE '(' E ')' stmt {}
+| IF '(' E ')' stmt    {}
 | ID '=' E ';'         {}
 | STRUCT ID ID  '{' litteral_array '}' {}
 ;
@@ -77,10 +83,14 @@ litteral_array: litteral        {}
 ;
 
 litteral: '{' litteral_array '}' {}
-| NUM                            {}
+| NUM                            {$$ = ast_int_con($1);}
 | TXT                            {}
 ;
 
+type: INT
+|STRING
+|STRUCT ID
+;
 
 E: E '+' E                  {}
 | E '-' E                   {}
@@ -93,10 +103,10 @@ E: E '+' E                  {}
 | E GE E                    {}
 | E EQ E                    {}
 | E NE E                    {}
+| litteral                  {$$ = $1;}
+| '-' E %prec UMINUS        {}
 | ID                        {}
-| NUM                       {}
-| '-' NUM %prec UMINUS      {}
-| TXT                       {}
+| ID '.' ID                 {}
 ;
 
 
