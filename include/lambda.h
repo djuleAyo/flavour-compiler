@@ -2,7 +2,7 @@
 #define _LAMBDA_H
 
 #include "scope.h"
-#include "ast.h"
+#include "ast_new.h"
 #include "object.h"
 
 struct _scope;

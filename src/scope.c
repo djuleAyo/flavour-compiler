@@ -59,7 +59,7 @@ void free_scope_branch(scope s)
 }
 
 
-object scope_find(scope s, string k, type t)
+object scope_find(scope s, string k, type t, bool recursion)
 {
   object ret_val = NULL;
 
@@ -68,7 +68,8 @@ object scope_find(scope s, string k, type t)
   {
     pair p = hash_find(s->table, k);
     if(p) return p->data;
-    else goto recursion;
+    else if(recursion) goto recursion;
+    else return NULL;
   }
 
  lambda:
@@ -96,35 +97,38 @@ object scope_find(scope s, string k, type t)
           }
 
       }
-    goto recursion;
+    if(recursion)  goto recursion;
+    else return NULL;
   }
 
   recursion:
   {
   if(s->scope_parrent)
     {
-      ret_val = scope_find(s->scope_parrent, k, t);
+      ret_val = scope_find(s->scope_parrent, k, t, true);
     }
   if(ret_val) return ret_val;
 
   if(s->lambda_parrent)
     {
-      ret_val = scope_find(s->lambda_parrent, k, t);
+      ret_val = scope_find(s->lambda_parrent, k, t, true);
     }
   return ret_val;
   }
 }
 
-object scope_assign(scope s, string k, object o)
+object scope_assign(string k, object o)
 {
-  pair p = hash_find(s->table, k);
-  assert(p && "Error: undeclared variable\n");
+  object found = scope_find(current_scope, k, NULL, true);
+  assert(o && "assign to undeclared var");
 
-  free_object((object)(p->data));
+  assert(type_equals(found->type_val, o->type_val)
+         && "Type missmatch on assign");
 
-  p->data = clone_object(o);
+  //MISS A LEAK?? HERE!
+  found->data = o->data;
 
-  return p->data;
+  return found;
 }
 
 object scope_add(scope s, string k, object o)

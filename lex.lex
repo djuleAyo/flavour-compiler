@@ -36,8 +36,8 @@ print return PRINT;
 "!=" return NE;
 
 
-["][^"\n]*["] {yylval.s = NULL; strdup(yytext); return TXT;}
-[a-zA-Z][a-zA-Z0-9_]* {yylval.s =NULL; strdup(yytext); return ID;}
+["][^"\n]*["] {yylval.s = strdup(yytext); return TXT;}
+[a-zA-Z][a-zA-Z0-9_]* {yylval.s = strdup(yytext); return ID;}
 [-+*/()[\]{};!=.,><] return yytext[0];
 [0-9]+ {yylval.i = atoi(yytext); return NUM;}
 

@@ -1,11 +1,9 @@
-#pragma once
+#ifndef _interpreter_H
+#define _interpreter_H
 
-#include "ast.h"
-#include "flavour.h"
-#include "sym_table.h"
-#include "types.h"
+#include "ast_new.h"
 
-basic_type_value interpret_expr(ast_node n, sym_table st);
+ast_node interpret_expr(ast_node n);
+void interpret_stmt(ast_node n);
 
-void interpret_stmt(ast_node n, sym_table st);
-
+#endif

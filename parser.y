@@ -6,12 +6,15 @@
 #include "op_node_macros.h"
 #include "ast_new.h"
 #include "flavour.h"
+#include "scope.h"
+#include "type.h"
+#include "interpreter.h"
 
-extern int yylineno;
+  extern int yylineno;
 extern int yylex();
 
- init_basic_types();
- init_scope();
+#define exe_global($$) do{if(current_scope == global_scope)    \
+      interpret_stmt($$); } while (0)
 
 void yyerror(string msg)
 {
@@ -31,7 +34,7 @@ void yyerror(string msg)
 %token<i> NUM
 %token<s> ID TXT
 
-%type<ast> litteral E
+%type <ast> E stmt block stmt_array def
 
 
 %left NE EQ
@@ -46,66 +49,51 @@ void yyerror(string msg)
 
 
 
-program: program stmt  {}
+program: program stmt  {interpret_stmt($2);}
 |
 ;
 
-block : '{' stmt_array '}'  {}
+block : '{' stmt_array '}'  {$$ = $2;}
 ;
 
-stmt_array : stmt_array stmt {}
-|                            {}
+stmt_array : stmt_array stmt {add_to_block($1, $2); }
+|                            {
+  $$ = make_ast_block();
+
+
+ }
 ;
 
-def: INT ID '=' E ';'            {}
-| STRING ID '=' E ';'            {}
-| STRUCT ID '{' decl_array '}'   {}
-;
-
-decl_array: decl_array decl  {}
-|                            {}
-;
-
-decl : type ID ';'     {}
-
-stmt: PRINT  E ';'      {printf("%d", $2->data.int_con);}
-| def   {}
-| decl  {}
-| block                {printf("block\n");}
-| WHILE '(' E ')' stmt {}
+stmt: PRINT  E ';'      {$$ = ast_print($2);}
+| def                  {$$ = $1;}
+| block                {
+  $$ = $1;
+}
+| WHILE '(' E ')' stmt {$$ = ast_while($3, $5);}
 | IF '(' E ')' stmt    {}
-| ID '=' E ';'         {}
-| STRUCT ID ID  '{' litteral_array '}' {}
+| ID '=' E ';'         {$$ = ast_bin_node(ast_id($1), $3, AST_NODE_ASSIG);}
 ;
 
-litteral_array: litteral        {}
-| litteral_array  ',' litteral  {}
+def: INT ID '=' E ';'            {
+  $$ = ast_bin_node(ast_id($2), $4, AST_NODE_DEF);
+ }
 ;
 
-litteral: '{' litteral_array '}' {}
-| NUM                            {$$ = ast_int_con($1);}
-| TXT                            {}
-;
-
-type: INT
-|STRING
-|STRUCT ID
-;
-
-E: E '+' E                  {}
-| E '-' E                   {}
-| E '*' E                   {}
-| E '/' E                   {}
-| '(' E ')'                 {}
-| E LT E                    {}
-| E GT E                    {}
-| E LE E                    {}
-| E GE E                    {}
-| E EQ E                    {}
-| E NE E                    {}
-| litteral                  {$$ = $1;}
-| '-' E %prec UMINUS        {}
-| ID                        {}
+E: E '+' E                  {$$ = ast_bin_node($1, $3, AST_NODE_OP_PLUS);}
+| E '-' E                   {$$ = ast_bin_node($1, $3, AST_NODE_OP_MINUS);}
+| E '*' E                   {$$ = ast_bin_node($1, $3, AST_NODE_OP_MUL);}
+| E '/' E                   {$$ = ast_bin_node($1, $3, AST_NODE_OP_DIV);}
+| '(' E ')'                 {$$ = $2;}
+| E LT E                    {$$ = ast_bin_node($1, $3, AST_NODE_OP_LT);}
+| E GT E                    {$$ = ast_bin_node($1, $3, AST_NODE_OP_GT);}
+| E LE E                    {$$ = ast_bin_node($1, $3, AST_NODE_OP_LE);}
+| E GE E                    {$$ = ast_bin_node($1, $3, AST_NODE_OP_GE);}
+| E EQ E                    {$$ = ast_bin_node($1, $3, AST_NODE_OP_EQ);}
+| E NE E                    {$$ = ast_bin_node($1, $3, AST_NODE_OP_NE);}
+| NUM                       {$$ = ast_int_con($1);}
+| TXT                       {$$ = ast_string_con($1);}
+| '-' E %prec UMINUS        {$$ = ast_un_node($2, AST_NODE_OP_UN_MINUS);}
+| ID                        {$$ = ast_id($1);}
 | ID '.' ID                 {}
 ;
 
@@ -114,8 +102,35 @@ E: E '+' E                  {}
 
 int main()
 {
+  init_basic_types();
+  init_scope();
   /*
 
+    | STRING ID '=' E ';'            {}
+    | STRUCT ID '{' decl_array '}'   {}
+    ;
+
+
+
+    decl_array: decl_array decl  {}
+    |                            {}
+    ;
+
+    | decl                 {}
+    ;
+
+
+    type: INT
+    |STRING
+    |STRUCT ID
+    ;
+
+    litteral: '{' litteral_array '}' {}
+
+    ;
+    litteral_array: litteral        {}
+    | litteral_array  ',' litteral  {}
+    ;
 
 
 

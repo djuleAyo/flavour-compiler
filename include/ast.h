@@ -2,8 +2,8 @@
 
 #include "type.h"
 
-struct _ast_node {};
-typedef struct _ast_node* ast_node;
+/* struct _ast_node {}; */
+/* typedef struct _ast_node* ast_node; */
 
 /* #define BLOCK_INITIAL_VOLUME 10 */
 /* #define UNARAN 1 */

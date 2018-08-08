@@ -12,7 +12,7 @@ struct A {
        int int_prop;
        string string_prop;
 }
-struct A a_struct {10, "hello initializer lists"}
+struct A a_struct = {10, "hello initializer lists", 21354, 453,"ad"};
   struct A b_struct = a_struct;
 
 b_struct.int_prop = 3;

@@ -37,8 +37,8 @@ void free_scope_branch(scope s);
 
 //scope_find(h, k, t) ==> lookup for lambda, type is for overload
 //scope_find(h, k, NULL) ==> lookup for struct or basic type
-object scope_find(scope h, string k, type t);
+object scope_find(scope h, string k, type t, bool recursion);
 object scope_add(scope h, string k, object o);
-object scope_assign(scope h, string k, object o);
+object scope_assign(string k, object o);
 
 #endif
